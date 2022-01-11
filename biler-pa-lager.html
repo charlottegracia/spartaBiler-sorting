@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+        integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/lpp0zam.css">
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/js/script.js" defer></script>
+    <title>Biler på lager</title>
+</head>
+
+<body class="cars">
+    <section class="background">
+        <header></header>
+    </section>
+    <main>
+        <section class="options">
+            <select class="maerker" name="cars" id="cars">
+                <option value="">Mærke</option>
+            </select>
+            <select class="aargang" name="cars" id="cars">
+                <option value="">Årstal</option>
+            </select>
+            <a>
+                <button onclick="sortCars()" class="filterbutton">SØG</button>
+            </a>
+        </section>
+        <section class="carGrid"></section>
+        <section class="noCars"></section>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

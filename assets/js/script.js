@@ -328,7 +328,6 @@ function sortCars() {
 }
 
 function drawCars(biler) {
-    console.log("antal biler: " + biler.length);
     let text = "";
     biler.forEach(bil => {
         text +=
@@ -365,7 +364,7 @@ function drawCars(biler) {
         </a>
         `;
     });
-    document.querySelector('.numberOfCars').innerHTML = `Antal biler fundet: ${biler.length}`;
+    document.querySelector('.numberOfCars').innerHTML = `Antal biler fundet: <span class="robotolight">${biler.length}</span>`;
     document.querySelector('.carGrid').innerHTML = text;
     document.querySelector('.noCars').innerHTML = "";
 }

@@ -301,6 +301,7 @@ function sortCars() {
                 <p>Der er desværre ingen biler, der matcher dine kriterier. Prøv en anden kombination eller klik på knappen nedenfor for at nulstille.</p>
                 <button onclick="drawCars(alleBiler)" class="nulstil">Nulstil filtrering</button>
             `;
+            document.querySelector('.numberOfCars').innerHTML = "";
             document.querySelector('.carGrid').innerHTML = "";
             document.querySelector('.noCars').innerHTML = text;
         }
@@ -327,6 +328,7 @@ function sortCars() {
 }
 
 function drawCars(biler) {
+    console.log("antal biler: " + biler.length);
     let text = "";
     biler.forEach(bil => {
         text +=
@@ -363,6 +365,7 @@ function drawCars(biler) {
         </a>
         `;
     });
+    document.querySelector('.numberOfCars').innerHTML = `Antal biler fundet: ${biler.length}`;
     document.querySelector('.carGrid').innerHTML = text;
     document.querySelector('.noCars').innerHTML = "";
 }

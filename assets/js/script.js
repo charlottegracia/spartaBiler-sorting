@@ -246,72 +246,35 @@ function checkPage() {
 }
 
 fetchCars();
-let cars;
+let alleBiler;
 
 function fetchCars() {
     fetch('https://spartabiler.charlottegracia.dk/wp-json/wp/v2/posts?categories=2&per_page=50')
         .then(response => response.json())
         .then(data => {
-            biler = data;
-            let brandArray = [];
-            let yearArray = [];
+            alleBiler = data;
+            let maerkeArray = [];
+            let aargangArray = [];
             data.forEach(element => {
-                brandArray.push(element.acf.maerke);
-                yearArray.push(element.acf.aargang);
+                maerkeArray.push(element.acf.maerke);
+                aargangArray.push(element.acf.aargang);
             });
 
-            let uniqueBrands = [...new Set(brandArray)];
-            uniqueBrands.sort();
-
-            uniqueBrands.forEach(maerke => {
+            let unikkeMaerker = [...new Set(maerkeArray)];
+            unikkeMaerker.sort();
+            unikkeMaerker.forEach(maerke => {
                 let text = `<option value="${maerke}">${maerke}</option>`;
                 document.querySelector('.maerker').innerHTML += text;
             });
 
-            let uniqueYears = [...new Set(yearArray)];
-            uniqueYears.sort();
-
-            uniqueYears.forEach(aargang => {
+            let unikkeAargange = [...new Set(aargangArray)];
+            unikkeAargange.sort();
+            unikkeAargange.forEach(aargang => {
                 let text = `<option value="${aargang}">${aargang}</option>`;
                 document.querySelector('.aargang').innerHTML += text;
             });
 
-            data.forEach(bil => {
-                let text = `
-            <a href="bil.html" class="carBox">
-                <img src="${bil.acf.billede1.url}" alt="">
-                <article class="details">
-                    <section>
-                        <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                        <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                    </section>
-                    <section>
-                        <section class="icondetail">
-                            <img src="assets/images/history.png" alt="">
-                            <p>Årstal</p>
-                        </section>
-                        <p class="robotolight">${bil.acf.aargang}</p>
-                    </section>
-                    <section>
-                        <section class="icondetail">
-                            <img src="assets/images/road.png" alt="">
-                            <p>KM kørt</p>
-                        </section>
-                        <p class="robotolight">${bil.acf.km_kort}</p>
-                    </section>
-                    <section>
-                        <section class="icondetail">
-                            <img src="assets/images/gas-station.png" alt="">
-                            <p>Brændstof</p>
-                        </section>
-                        <p>${bil.acf.braendstof}</p>
-                    </section>
-                </article>
-            </a>
-            `;
-                document.querySelector('.carGrid').innerHTML += text;
-
-            })
+            drawCars(data);
         })
         .catch(error => {
             console.log(error);
@@ -324,243 +287,81 @@ function sortCars() {
     let sorteredeBiler = [];
 
     if (maerke != "" && aargang != "") {
-        biler.forEach(bil => {
-            if (bil.acf.maerke == maerke) {
+        alleBiler.forEach(bil => {
+            if (bil.acf.maerke == maerke && bil.acf.aargang == aargang) {
                 sorteredeBiler.push(bil);
             }
         });
 
-        let sorteredeBiler2 = [];
-        sorteredeBiler.forEach(bil => {
-            if (bil.acf.aargang == aargang) {
-                sorteredeBiler2.push(bil);
-                console.log(`${bil.acf.maerke} ${bil.acf.model}`);
-            }
-        });
+        if (sorteredeBiler.length >= 1) {
+            drawCars(sorteredeBiler);
 
-        if (sorteredeBiler2.length >= 1) {
-            let text = "";
-            sorteredeBiler2.forEach(bil => {
-                text +=
-                    `
-                <a href="bil.html" class="carBox">
-                    <img src="${bil.acf.billede1.url}" alt="">
-                    <article class="details">
-                        <section>
-                            <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                            <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/history.png" alt="">
-                                <p>Årstal</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.aargang}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/road.png" alt="">
-                                <p>KM kørt</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.km_kort}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/gas-station.png" alt="">
-                                <p>Brændstof</p>
-                            </section>
-                            <p>${bil.acf.braendstof}</p>
-                        </section>
-                    </article>
-                </a>
-                `;
-            });
-            document.querySelector('.carGrid').innerHTML = text;
-            document.querySelector('.noCars').innerHTML = "";
-        }
-
-
-        if (sorteredeBiler2.length == 0) {
-            console.log("no cars sorri");
+        } else if (sorteredeBiler.length == 0) {
             text = `
                 <p>Der er desværre ingen biler, der matcher dine kriterier. Prøv en anden kombination eller klik på knappen nedenfor for at nulstille.</p>
-                <button onclick="nulstil()" class="nulstil">Nulstil filtrering</button>
+                <button onclick="drawCars(alleBiler)" class="nulstil">Nulstil filtrering</button>
             `;
             document.querySelector('.carGrid').innerHTML = "";
             document.querySelector('.noCars').innerHTML = text;
         }
 
     } else if (maerke != "" && aargang == "") {
-        biler.forEach(bil => {
+        alleBiler.forEach(bil => {
             if (bil.acf.maerke == maerke) {
                 sorteredeBiler.push(bil);
             }
         });
-
-        let text = "";
-        sorteredeBiler.forEach(bil => {
-            text +=
-                `
-                <a href="bil.html" class="carBox">
-                    <img src="${bil.acf.billede1.url}" alt="">
-                    <article class="details">
-                        <section>
-                            <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                            <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/history.png" alt="">
-                                <p>Årstal</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.aargang}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/road.png" alt="">
-                                <p>KM kørt</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.km_kort}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/gas-station.png" alt="">
-                                <p>Brændstof</p>
-                            </section>
-                            <p>${bil.acf.braendstof}</p>
-                        </section>
-                    </article>
-                </a>
-                `;
-        });
-        document.querySelector('.carGrid').innerHTML = text;
-        document.querySelector('.noCars').innerHTML = "";
+        drawCars(sorteredeBiler);
 
     } else if (aargang != "" && maerke == "") {
-        biler.forEach(bil => {
+        alleBiler.forEach(bil => {
             if (bil.acf.aargang == aargang) {
                 sorteredeBiler.push(bil);
             }
         });
-
-        let text = "";
-        sorteredeBiler.forEach(bil => {
-            text +=
-                `
-                <a href="bil.html" class="carBox">
-                    <img src="${bil.acf.billede1.url}" alt="">
-                    <article class="details">
-                        <section>
-                            <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                            <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/history.png" alt="">
-                                <p>Årstal</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.aargang}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/road.png" alt="">
-                                <p>KM kørt</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.km_kort}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/gas-station.png" alt="">
-                                <p>Brændstof</p>
-                            </section>
-                            <p>${bil.acf.braendstof}</p>
-                        </section>
-                    </article>
-                </a>
-                `;
-        });
-        document.querySelector('.carGrid').innerHTML = text;
-        document.querySelector('.noCars').innerHTML = "";
+        drawCars(sorteredeBiler);
 
     } else if (maerke == "" && aargang == "") {
-        let text = "";
-        biler.forEach(bil => {
-            text +=
-                `
-                <a href="bil.html" class="carBox">
-                    <img src="${bil.acf.billede1.url}" alt="">
-                    <article class="details">
-                        <section>
-                            <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                            <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/history.png" alt="">
-                                <p>Årstal</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.aargang}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/road.png" alt="">
-                                <p>KM kørt</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.km_kort}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/gas-station.png" alt="">
-                                <p>Brændstof</p>
-                            </section>
-                            <p>${bil.acf.braendstof}</p>
-                        </section>
-                    </article>
-                </a>
-                `;
-        });
-        document.querySelector('.carGrid').innerHTML = text;
-        document.querySelector('.noCars').innerHTML = "";
-
+        drawCars(alleBiler);
     }
 }
 
-function nulstil() {
+function drawCars(biler) {
     let text = "";
     biler.forEach(bil => {
         text +=
             `
-                <a href="bil.html" class="carBox">
-                    <img src="${bil.acf.billede1.url}" alt="">
-                    <article class="details">
-                        <section>
-                            <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
-                            <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/history.png" alt="">
-                                <p>Årstal</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.aargang}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/road.png" alt="">
-                                <p>KM kørt</p>
-                            </section>
-                            <p class="robotolight">${bil.acf.km_kort}</p>
-                        </section>
-                        <section>
-                            <section class="icondetail">
-                                <img src="assets/images/gas-station.png" alt="">
-                                <p>Brændstof</p>
-                            </section>
-                            <p>${bil.acf.braendstof}</p>
-                        </section>
-                    </article>
-                </a>
-                `;
+        <a href="bil.html" class="carBox">
+            <img src="${bil.acf.billede1.url}" alt="">
+            <article class="details">
+                <section>
+                    <h2 class="headerCars">${bil.acf.maerke} ${bil.acf.model}</h2>
+                    <p class="pris robotolight">${bil.acf.flexleasing_privat_manedlig_ydelse} pr. md.</p>
+                </section>
+                <section>
+                    <section class="icondetail">
+                        <img src="assets/images/history.png" alt="">
+                        <p>Årstal</p>
+                    </section>
+                    <p class="robotolight">${bil.acf.aargang}</p>
+                </section>
+                <section>
+                    <section class="icondetail">
+                        <img src="assets/images/road.png" alt="">
+                        <p>KM kørt</p>
+                    </section>
+                    <p class="robotolight">${bil.acf.km_kort}</p>
+                </section>
+                <section>
+                    <section class="icondetail">
+                        <img src="assets/images/gas-station.png" alt="">
+                        <p>Brændstof</p>
+                    </section>
+                    <p>${bil.acf.braendstof}</p>
+                </section>
+            </article>
+        </a>
+        `;
     });
     document.querySelector('.carGrid').innerHTML = text;
     document.querySelector('.noCars').innerHTML = "";

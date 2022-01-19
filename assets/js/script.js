@@ -300,7 +300,7 @@ function sortCars() {
             text = `
                 <p>Der er desværre ingen biler, der matcher dine kriterier. Prøv en anden kombination eller klik på knappen nedenfor for at nulstille.</p>
                 <button onclick="drawCars(alleBiler)" class="nulstil">Nulstil filtrering</button>
-            `; // #4: Consistency and standards & #9: Help Users Recognize, Diagnose and Recover from Errors
+            `;
             document.querySelector('.numberOfCars').innerHTML = "";
             document.querySelector('.carGrid').innerHTML = "";
             document.querySelector('.noCars').innerHTML = text;
@@ -364,7 +364,7 @@ function drawCars(biler) {
         </a>
         `;
     });
-    document.querySelector('.numberOfCars').innerHTML = `Antal biler fundet: <span class="robotolight">${biler.length}</span>`; // #1: visibility of system status
+    document.querySelector('.numberOfCars').innerHTML = `Antal biler fundet: <span class="robotolight">${biler.length}</span>`;
     document.querySelector('.carGrid').innerHTML = text;
     document.querySelector('.noCars').innerHTML = "";
 }
